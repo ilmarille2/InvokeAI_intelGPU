@@ -4,6 +4,7 @@
 - It's based on InvokeAI 6.12.0 which was modified with AI to make it work with torch-xpu.
 - It's provided as it is. I have no plans to commit it to main invokeai repository.
 - Tested with Intel Arc Pro B50 GPU at Windows 11
+
 **Installation**
 
 Installation use manual method explained at original invokeai repository with some modifications. Read original instructions from here: <a href="https://invoke-ai.github.io/InvokeAI/installation/manual/">https://invoke-ai.github.io/InvokeAI/installation/manual/</a>
