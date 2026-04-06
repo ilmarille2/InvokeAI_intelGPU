@@ -1,7 +1,7 @@
   
 **This is totally unofficial version of invokeai which can be used with Intel Arc GPU.**
 
-- It's based on InvokeAI 6.12.0 and was modified with AI to make it work with torch-xpu.
+- It's based on InvokeAI 6.12.0 which was modified with AI to make it work with torch-xpu.
 - It's provided as it is. I have no plans to commit it to main invokeai repository.
 - Tested with Intel Arc Pro B50 GPU at Windows 11 and Bazzite Linux
 
