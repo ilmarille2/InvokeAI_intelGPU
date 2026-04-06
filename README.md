@@ -19,5 +19,9 @@ Follow original instructions except for step 8.
 host: 0.0.0.0
 port: 9090</code>
 
+**Related projects**
+
+- <a href="https://github.com/Raasu2/invokeai-xpu">https://github.com/Raasu2/invokeai-xpu</a>
+
 
  
