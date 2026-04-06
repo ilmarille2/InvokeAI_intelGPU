@@ -1,9 +1,9 @@
   
 **This is totally unofficial version of invokeai which can be used with Intel Arc GPU.**
 
-- It's based on InvokeAI 6.12.0 which was modified with AI to make it work with torch-xpu.
+- It's based on InvokeAI 6.12.0 which was modified with AI to make it work with Intel Arc GPU at Windows 11
 - It's provided as it is. I have no plans to commit it to main invokeai repository.
-- Instalaltion tested with Intel Arc Pro B50 GPU at Windows 11
+- Installation tested with Intel Arc Pro B50 GPU at Windows 11. Propably works with Linux too.
 
 **Installation**
 
@@ -19,7 +19,7 @@ You can install all these tools using following command:
 
 Installation use manual method explained at original invokeai repository with some modifications. Read original instructions from here: <a href="https://invoke-ai.github.io/InvokeAI/installation/manual/">https://invoke-ai.github.io/InvokeAI/installation/manual/</a>
 
-Here are commands to make installation:
+Here are commands to make installation at Windows 11 commandline:
 
 <code>
 git clone https://github.com/ilmarille2/InvokeAI_intelGPU
