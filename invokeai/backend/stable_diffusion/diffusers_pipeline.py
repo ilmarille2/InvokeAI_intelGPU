@@ -183,6 +183,23 @@ class StableDiffusionGeneratorPipeline(StableDiffusionPipeline):
             prefer_xformers = False
 
         config = get_config()
+        if self.unet.device.type == "xpu":
+            # xformers is CUDA-only, so Intel Arc/XPU should not attempt to enable it.
+            # Use torch-sdp or sliced attention depending on config.
+            if config.attention_type == "sliced":
+                slice_size = config.attention_slice_size
+                if slice_size == "auto":
+                    slice_size = auto_detect_slice_size(latents)
+                elif slice_size == "balanced":
+                    slice_size = "auto"
+                self.enable_attention_slicing(slice_size=slice_size)
+                return
+            elif config.attention_type == "normal":
+                self.disable_attention_slicing()
+                return
+            # For XPU, torch-sdp is the default and supported path.
+            return
+
         if config.attention_type == "xformers" and is_xformers_available() and prefer_xformers:
             self.enable_xformers_memory_efficient_attention()
             return
@@ -217,7 +234,7 @@ class StableDiffusionGeneratorPipeline(StableDiffusionPipeline):
             # torch-sdp is the default in diffusers.
             return
 
-        if self.unet.device.type == "cpu" or self.unet.device.type == "mps":
+        if self.unet.device.type == "cpu" or self.unet.device.type == "mps" or self.unet.device.type == "xpu":
             mem_free = psutil.virtual_memory().free
         elif self.unet.device.type == "cuda":
             mem_free, _ = torch.cuda.mem_get_info(TorchDevice.normalize(self.unet.device))

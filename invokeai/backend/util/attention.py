@@ -18,7 +18,7 @@ def auto_detect_slice_size(latents: torch.Tensor) -> str:
         * latents.size(dim=3)
         * bytes_per_element_needed_for_baddbmm_duplication
     )
-    if latents.device.type in {"cpu", "mps"}:
+    if latents.device.type in {"cpu", "mps", "xpu"}:
         mem_free = psutil.virtual_memory().free
     elif latents.device.type == "cuda":
         mem_free, _ = torch.cuda.mem_get_info(latents.device)

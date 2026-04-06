@@ -41,6 +41,7 @@ class DWOpenposeDetector:
 
         device = TorchDevice.choose_torch_device()
         providers = ["CUDAExecutionProvider"] if device.type == "cuda" else ["CPUExecutionProvider"]
+        # Note: XPU (Intel Arc GPU) would need Intel GPU support in ONNX Runtime
         return ort.InferenceSession(path_or_bytes=model_path, providers=providers)
 
     def __init__(self, session_det: ort.InferenceSession, session_pose: ort.InferenceSession):

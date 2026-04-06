@@ -841,3 +841,35 @@ if xformers_available:
         )
 
     xformers.ops.memory_efficient_attention = new_memory_efficient_attention
+
+
+# Patch diffusers to disable xformers on Intel XPU devices
+def _patch_diffusers_xformers_for_xpu():
+    """Disable xformers in diffusers when running on Intel XPU devices."""
+    try:
+        import diffusers.utils.import_utils as diffusers_import_utils
+
+        # Store original function
+        original_is_xformers_available = diffusers_import_utils.is_xformers_available
+
+        def patched_is_xformers_available():
+            # If we're on XPU, never use xformers
+            if torch.xpu.is_available():
+                return False
+            # Otherwise use original logic
+            return original_is_xformers_available()
+
+        # Apply the patch
+        diffusers_import_utils.is_xformers_available = patched_is_xformers_available
+
+        # Also patch the internal _xformers_available if it exists
+        if hasattr(diffusers_import_utils, '_xformers_available'):
+            diffusers_import_utils._xformers_available = not torch.xpu.is_available()
+
+    except Exception as e:
+        # If patching fails, just continue - better to have working app than crash
+        pass
+
+
+# Apply the patch immediately
+_patch_diffusers_xformers_for_xpu()
