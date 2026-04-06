@@ -3,21 +3,40 @@
 
 - It's based on InvokeAI 6.12.0 which was modified with AI to make it work with torch-xpu.
 - It's provided as it is. I have no plans to commit it to main invokeai repository.
-- Tested with Intel Arc Pro B50 GPU at Windows 11
+- Instalaltion tested with Intel Arc Pro B50 GPU at Windows 11
 
 **Installation**
 
+Tools needed for installation:
+- python 3.12  
+- git  
+- uv
+- pnpm 
+
+You can install all these tools using following command:
+
+<code> winget install Python.Python.3.12 Git.Git  GitHub.GitLFS astral-sh.uv  pnpm.pnpm</code>
+
 Installation use manual method explained at original invokeai repository with some modifications. Read original instructions from here: <a href="https://invoke-ai.github.io/InvokeAI/installation/manual/">https://invoke-ai.github.io/InvokeAI/installation/manual/</a>
 
-Follow original instructions except for step 8.
+Here are commands to make installation:
 
- <code>uv pip install {location of your local invokeai_intelGPU repository} --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu</code>
+<code>
+git clone https://github.com/ilmarille2/InvokeAI_intelGPU
+mkdir InvokeA
+cd .\InvokeAI\
+uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
+.venv\Scripts\activate  
+cd ..\InvokeAI_intelGPU\invokeai\frontend\web\ 
+pnpm i
+pnpm build
+cd ..\..\..\..\InvokeAI\
+uv pip install ..\InvokeAI_intelGPU --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
+deactivate
+.venv\Scripts\activate
+invokeai-web --root .</code>
 
-**My configuration file - invokeai.yaml**
-
-<code>device: "xpu:0"
-host: 0.0.0.0
-port: 9090</code>
+If you want you can add to invokeai.yaml configuration file setting **device: "xpu:0"**
 
 **Related projects**
 
