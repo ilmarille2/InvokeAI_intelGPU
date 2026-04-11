@@ -26,15 +26,15 @@ git clone https://github.com/ilmarille2/InvokeAI_intelGPU
 mkdir InvokeA
 cd .\InvokeAI\
 uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
-.venv\Scripts\activate  
+.venv\Scripts\activate.bat  
 cd ..\InvokeAI_intelGPU\invokeai\frontend\web\ 
 pnpm i
 pnpm build
 cd ..\..\..\..\InvokeAI\
 uv pip install ..\InvokeAI_intelGPU --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
-deactivate
-.venv\Scripts\activate
-invokeai-web --root .</code>
+.venv\Scripts\deactivate.bat
+.venv\Scripts\activate.bat
+.venv\Scripts\invokeai-web.exe --root .</code>
 
 If you want you can add to invokeai.yaml configuration file setting **device: "xpu:0"**
 
