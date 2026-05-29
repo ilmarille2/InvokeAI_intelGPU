@@ -34,6 +34,7 @@ jobs:
         - cuda
         - cpu
         - rocm
+        - intel
     runs-on: ubuntu-latest
     name: ${{ matrix.gpu-driver }}
     env:

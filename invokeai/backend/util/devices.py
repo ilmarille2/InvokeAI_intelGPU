@@ -10,6 +10,7 @@ TorchPrecisionNames = Literal["float32", "float16", "bfloat16"]
 CPU_DEVICE = torch.device("cpu")
 CUDA_DEVICE = torch.device("cuda")
 MPS_DEVICE = torch.device("mps")
+XPU_DEVICE = torch.device("xpu")
 
 
 @deprecated("Use TorchDevice.choose_torch_dtype() instead.")  # type: ignore
@@ -45,6 +46,7 @@ class TorchDevice:
     CPU_DEVICE = torch.device("cpu")
     CUDA_DEVICE = torch.device("cuda")
     MPS_DEVICE = torch.device("mps")
+    XPU_DEVICE = torch.device("xpu")
 
     @classmethod
     def choose_torch_device(cls) -> torch.device:
@@ -56,6 +58,8 @@ class TorchDevice:
             device = CUDA_DEVICE
         elif torch.backends.mps.is_available():
             device = MPS_DEVICE
+        elif hasattr(torch, "xpu") and torch.xpu.is_available():
+            device = cls.XPU_DEVICE
         else:
             device = CPU_DEVICE
         return cls.normalize(device)
@@ -84,14 +88,27 @@ class TorchDevice:
             else:
                 # Use the user-defined precision
                 return cls._to_dtype(config.precision)
+        elif device.type == "xpu" and hasattr(torch, "xpu") and torch.xpu.is_available():
+            if config.precision == "auto":
+                # Default to float16 for XPU devices
+                return cls._to_dtype("float16")
+            else:
+                # Use the user-defined precision
+                return cls._to_dtype(config.precision)
         # CPU / safe fallback
         return cls._to_dtype("float32")
+
+        
 
     @classmethod
     def get_torch_device_name(cls) -> str:
         """Return the device name for the current torch device."""
         device = cls.choose_torch_device()
-        return torch.cuda.get_device_name(device) if device.type == "cuda" else device.type.upper()
+        if device.type == "cuda":
+            return torch.cuda.get_device_name(device)
+        if device.type == "xpu":
+            return "XPU"
+        return device.type.upper()
 
     @classmethod
     def normalize(cls, device: Union[str, torch.device]) -> torch.device:
@@ -99,6 +116,16 @@ class TorchDevice:
         device = torch.device(device)
         if device.index is None and device.type == "cuda" and torch.cuda.is_available():
             device = torch.device(device.type, torch.cuda.current_device())
+        if (
+            device.index is None
+            and device.type == "xpu"
+            and hasattr(torch, "xpu")
+            and torch.xpu.is_available()
+        ):
+            try:
+                device = torch.device(device.type, torch.xpu.current_device())
+            except Exception:
+                pass
         return device
 
     @classmethod
@@ -108,6 +135,12 @@ class TorchDevice:
             torch.mps.empty_cache()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+        if hasattr(torch, "xpu") and torch.xpu.is_available():
+            try:
+                if hasattr(torch.xpu, "empty_cache"):
+                    torch.xpu.empty_cache()
+            except Exception:
+                pass
 
     @classmethod
     def _to_dtype(cls, precision_name: TorchPrecisionNames) -> torch.dtype:
