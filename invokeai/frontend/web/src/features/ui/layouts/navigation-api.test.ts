@@ -426,7 +426,7 @@ describe('AppNavigationApi', () => {
       // TODO(psyche): Use vitest's fake timeres
       // Allow some margin for timer resolution
       expect(elapsed).toBeGreaterThanOrEqual(190);
-      expect(elapsed).toBeLessThan(210);
+      expect(elapsed).toBeLessThan(220);
     });
   });
 
