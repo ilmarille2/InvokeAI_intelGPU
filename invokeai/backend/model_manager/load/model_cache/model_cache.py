@@ -615,6 +615,10 @@ class ModelCache:
             # TODO(ryand): Is it accurate that MPS shares memory with the CPU?
             vram_free = psutil.virtual_memory().available
             vram_available_to_process = vram_free + vram_reserved
+        elif self._execution_device.type == "xpu":
+            vram_allocated = torch.xpu.memory_allocated(self._execution_device)
+            vram_free, _vram_total = torch.xpu.mem_get_info(self._execution_device)
+            vram_available_to_process = vram_free + vram_allocated
         else:
             raise ValueError(f"Unsupported execution device: {self._execution_device.type}")
 
@@ -628,6 +632,8 @@ class ModelCache:
             return torch.cuda.memory_allocated()
         elif self._execution_device.type == "mps":
             return torch.mps.current_allocated_memory()
+        elif self._execution_device.type == "xpu":
+            return torch.xpu.memory_allocated(self._execution_device)
         else:
             raise ValueError(f"Unsupported execution device type: {self._execution_device.type}")
         # Alternative definition of VRAM in use:
