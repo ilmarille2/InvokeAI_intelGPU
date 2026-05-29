@@ -23,7 +23,7 @@ Here are commands to make installation at Windows 11 commandline:
 
 <code>
 git clone https://github.com/ilmarille2/InvokeAI_intelGPU
-mkdir InvokeA
+mkdir InvokeAI
 cd .\InvokeAI\
 uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
 .venv\Scripts\activate.bat  
