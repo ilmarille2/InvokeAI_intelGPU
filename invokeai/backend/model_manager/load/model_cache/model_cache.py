@@ -341,14 +341,14 @@ class ModelCache:
         # Use the provided execution device, or fall back to the cache's default
         effective_execution_device = execution_device if execution_device is not None else self._execution_device
 
-        # Partial loading only makes sense on CUDA.
+        # Partial loading only makes sense on CUDA and XPU.
         # - When running on CPU, there is no 'loading' to do.
         # - When running on MPS, memory is shared with the CPU, so the default OS memory management already handles this
         #   well.
-        running_with_cuda = effective_execution_device.type == "cuda"
+        running_with_cuda_or_xpu = effective_execution_device.type in {"cuda", "xpu"}
 
         # Wrap model.
-        if isinstance(model, torch.nn.Module) and running_with_cuda and self._enable_partial_loading:
+        if isinstance(model, torch.nn.Module) and running_with_cuda_or_xpu and self._enable_partial_loading:
             wrapped_model = CachedModelWithPartialLoad(
                 model, effective_execution_device, keep_ram_copy=self._keep_ram_copy_of_weights
             )
@@ -615,6 +615,10 @@ class ModelCache:
             # TODO(ryand): Is it accurate that MPS shares memory with the CPU?
             vram_free = psutil.virtual_memory().available
             vram_available_to_process = vram_free + vram_reserved
+        elif self._execution_device.type == "xpu":
+            vram_allocated = torch.xpu.memory_allocated(self._execution_device)
+            vram_free, _vram_total = torch.xpu.mem_get_info(self._execution_device)
+            vram_available_to_process = vram_free + vram_allocated
         else:
             raise ValueError(f"Unsupported execution device: {self._execution_device.type}")
 
@@ -628,6 +632,8 @@ class ModelCache:
             return torch.cuda.memory_allocated()
         elif self._execution_device.type == "mps":
             return torch.mps.current_allocated_memory()
+        elif self._execution_device.type == "xpu":
+            return torch.xpu.memory_allocated(self._execution_device)
         else:
             raise ValueError(f"Unsupported execution device type: {self._execution_device.type}")
         # Alternative definition of VRAM in use:
@@ -660,10 +666,12 @@ class ModelCache:
         #   hard for users to understand. It is better for users to see that their RAM is maxed out, and then override
         #   the default value if desired.
 
-        # Lookup the total VRAM size for the CUDA execution device.
+        # Lookup the total VRAM size for the CUDA or XPU execution device.
         total_cuda_vram_bytes: int | None = None
         if self._execution_device.type == "cuda":
             _, total_cuda_vram_bytes = torch.cuda.mem_get_info(self._execution_device)
+        elif self._execution_device.type == "xpu":
+            _, total_cuda_vram_bytes = torch.xpu.mem_get_info(self._execution_device)
 
         # Apply heuristic 1.
         # ------------------

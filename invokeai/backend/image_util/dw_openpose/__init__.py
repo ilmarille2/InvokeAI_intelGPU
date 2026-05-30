@@ -40,6 +40,7 @@ class DWOpenposeDetector:
         the device type."""
 
         device = TorchDevice.choose_torch_device()
+        # ONNX Runtime supports CUDA, but not XPU directly, so fall back to CPU for XPU
         providers = ["CUDAExecutionProvider"] if device.type == "cuda" else ["CPUExecutionProvider"]
         return ort.InferenceSession(path_or_bytes=model_path, providers=providers)
 

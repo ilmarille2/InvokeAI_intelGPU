@@ -98,6 +98,12 @@ dependencies = [
   "pytorch-triton-rocm",
 ]
 
+"intel" = [
+  "torch==2.7.1+cpu",
+  "torchvision==0.22.1+cpu",
+  "pytorch-triton-xpu"
+]
+
 "onnx" = ["onnxruntime"]
 "onnx-cuda" = ["onnxruntime-gpu"]
 "onnx-directml" = ["onnxruntime-directml"]

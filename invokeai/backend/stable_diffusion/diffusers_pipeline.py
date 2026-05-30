@@ -216,11 +216,21 @@ class StableDiffusionGeneratorPipeline(StableDiffusionPipeline):
                 return
             # torch-sdp is the default in diffusers.
             return
+        
+        if self.unet.device.type == "xpu":
+            # For XPU, use xformers if available, otherwise let torch-sdp be the default
+            if is_xformers_available() and prefer_xformers:
+                self.enable_xformers_memory_efficient_attention()
+                return
+            # torch-sdp is the default in diffusers.
+            return
 
         if self.unet.device.type == "cpu" or self.unet.device.type == "mps":
             mem_free = psutil.virtual_memory().free
         elif self.unet.device.type == "cuda":
             mem_free, _ = torch.cuda.mem_get_info(TorchDevice.normalize(self.unet.device))
+        elif self.unet.device.type == "xpu":
+            mem_free, _ = torch.xpu.mem_get_info(TorchDevice.normalize(self.unet.device))
         else:
             raise ValueError(f"unrecognized device {self.unet.device}")
         # input tensor of [1, 4, h/8, w/8]

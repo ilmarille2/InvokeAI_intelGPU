@@ -2,7 +2,7 @@
 Test abstract device class.
 """
 
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 import torch
@@ -14,6 +14,7 @@ devices = ["cpu", "cuda:0", "cuda:1", "cuda:2", "mps"]
 device_types_cpu = [("cpu", torch.float32), ("cuda:0", torch.float32), ("mps", torch.float32)]
 device_types_cuda = [("cpu", torch.float32), ("cuda:0", torch.float16), ("mps", torch.float32)]
 device_types_mps = [("cpu", torch.float32), ("cuda:0", torch.float32), ("mps", torch.float16)]
+device_types_xpu = [("xpu", torch.float16)]
 
 
 @pytest.mark.parametrize("device_name", devices)
@@ -62,6 +63,31 @@ def test_device_dtype_mps(device_dtype_pair):
         config.device = device_name
         torch_dtype = TorchDevice.choose_torch_dtype()
         assert torch_dtype == dtype
+
+
+@pytest.mark.parametrize("device_dtype_pair", device_types_xpu)
+def test_device_dtype_xpu(device_dtype_pair):
+    with (
+        patch("torch.cuda.is_available", return_value=False),
+        patch("torch.backends.mps.is_available", return_value=False),
+        patch.object(torch, "xpu", new=Mock(is_available=Mock(return_value=True), current_device=Mock(return_value=0))),
+    ):
+        device_name, dtype = device_dtype_pair
+        config = get_config()
+        config.device = device_name
+        torch_dtype = TorchDevice.choose_torch_dtype()
+        assert torch_dtype == dtype
+
+
+def test_choose_torch_device_auto_prefers_xpu():
+    config = get_config()
+    config.device = "auto"
+    with (
+        patch("torch.cuda.is_available", return_value=False),
+        patch("torch.backends.mps.is_available", return_value=False),
+        patch.object(torch, "xpu", new=Mock(is_available=Mock(return_value=True), current_device=Mock(return_value=0))),
+    ):
+        assert TorchDevice.choose_torch_device() == torch.device("xpu:0")
 
 
 @pytest.mark.parametrize("device_dtype_pair", device_types_cuda)
