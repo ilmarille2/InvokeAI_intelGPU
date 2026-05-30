@@ -1,136 +1,46 @@
-<div align="center">
+  
+**This is totally unofficial version of invokeai which can be used with Intel Arc GPU.**
 
-![project hero](https://github.com/invoke-ai/InvokeAI/assets/31807370/6e3728c7-e90e-4711-905c-3b55844ff5be)
+- It's based on InvokeAI 6.13.0 which was modified with AI to make it work with Intel Arc GPU at Windows 11
+- It's provided as it is. I have no plans to commit it to main invokeai repository.
+- Installation tested with Intel Arc Pro B50 GPU at Windows 11. Propably works with Linux too.
 
-# Invoke - Professional Creative AI Tools for Visual Media
+**Installation**
 
-[![discord badge]][discord link] [![latest release badge]][latest release link] [![github stars badge]][github stars link] [![github forks badge]][github forks link] [![CI checks on main badge]][CI checks on main link] [![latest commit to main badge]][latest commit to main link] [![github open issues badge]][github open issues link] [![github open prs badge]][github open prs link] [![translation status badge]][translation status link]
+Tools needed for installation:
+- python 3.12  
+- git  
+- uv
+- pnpm 
 
-</div>
+You can install all these tools using following command:
 
-Invoke is a leading creative engine built to empower professionals and enthusiasts alike. Generate and create stunning visual media using the latest AI-driven technologies. Invoke offers an industry leading web-based UI, and serves as the foundation for multiple commercial products.
+<code> winget install Python.Python.3.12 Git.Git  GitHub.GitLFS astral-sh.uv  pnpm.pnpm</code>
 
-- Free to use under a commercially-friendly license
-- Download and install on compatible hardware
-- Generate, refine, iterate on images, and build workflows
+Installation use manual method explained at original invokeai repository with some modifications. Read original instructions from here: <a href="https://invoke-ai.github.io/InvokeAI/installation/manual/">https://invoke-ai.github.io/InvokeAI/installation/manual/</a>
 
-![Highlighted Features - Canvas and Workflows](https://github.com/invoke-ai/InvokeAI/assets/31807370/708f7a82-084f-4860-bfbe-e2588c53548d)
+Here are commands to make installation at Windows 11 commandline:
 
----
-> ## 📣 Are you a new or returning InvokeAI user?
-> Take our first annual [User's Survey](https://forms.gle/rCE5KuQ7Wfrd1UnS7)
+<code>
+git clone https://github.com/ilmarille2/InvokeAI_intelGPU
+mkdir InvokeAI
+cd .\InvokeAI\
+uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
+.venv\Scripts\activate.bat  
+cd ..\InvokeAI_intelGPU\invokeai\frontend\web\ 
+pnpm i
+pnpm build
+cd ..\..\..\..\InvokeAI\
+uv pip install ..\InvokeAI_intelGPU --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
+.venv\Scripts\deactivate.bat
+.venv\Scripts\activate.bat
+.venv\Scripts\invokeai-web.exe --root .</code>
 
----
+If you want you can add to invokeai.yaml configuration file setting **device: "xpu:0"**
 
-# Documentation
+**Related projects**
 
-| **Quick Links**                                                                                                                                             |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Installation and Updates][installation docs] - [Documentation and Tutorials][docs home] - [Bug Reports][github issues] - [Contributing][contributing docs] |
+- <a href="https://github.com/Raasu2/invokeai-xpu">https://github.com/Raasu2/invokeai-xpu</a>
 
-# Installation
 
-To get started with Invoke, [Download the Launcher](https://github.com/invoke-ai/launcher/releases/latest).
-
-## Troubleshooting, FAQ and Support
-
-Please review our [FAQ][faq] for solutions to common installation problems and other issues.
-
-For more help, please join our [Discord][discord link].
-
-## Features
-
-Full details on features can be found in [our documentation][features docs].
-
-### Web Server & UI
-
-Invoke runs a locally hosted web server & React UI with an industry-leading user experience.
-
-### Unified Canvas
-
-The Unified Canvas is a fully integrated canvas implementation with support for all core generation capabilities, in/out-painting, brush tools, and more. This creative tool unlocks the capability for artists to create with AI as a creative collaborator, and can be used to augment AI-generated imagery, sketches, photography, renders, and more.
-
-### Workflows & Nodes
-
-Invoke offers a fully featured workflow management solution, enabling users to combine the power of node-based workflows with the ease of a UI. This allows for customizable generation pipelines to be developed and shared by users looking to create specific workflows to support their production use-cases.
-
-### Board & Gallery Management
-
-Invoke features an organized gallery system for easily storing, accessing, and remixing your content in the Invoke workspace. Images can be dragged/dropped onto any Image-base UI element in the application, and rich metadata within the Image allows for easy recall of key prompts or settings used in your workflow.
-
-### Model Support
-- SD 1.5
-- SD 2.0
-- SDXL
-- SD 3.5 Medium
-- SD 3.5 Large
-- CogView 4
-- Flux.1 Dev
-- Flux.1 Schnell
-- Flux.1 Kontext
-- Flux.1 Krea
-- Flux Redux
-- Flux Fill
-- Flux.2 Klein 4B
-- Flux.2 Klein 9B
-- Z-Image Turbo
-- Z-Image Base
-- Anima
-- Qwen Image
-- Qwen Image Edit
-- Nano Banana (API Only)
-- GPT Image (API Only)
-- Wan (API Only)
-
-### Other features
-
-- Support for ckpt, diffusers, and some gguf models
-- Upscaling Tools
-- Embedding Manager & Support
-- Model Manager & Support
-- Workflow creation & management
-- Node-Based Architecture
-- Object Segmentation & Selection Models (SAM / SAM2)
-
-## Contributing
-
-Anyone who wishes to contribute to this project - whether documentation, features, bug fixes, code cleanup, testing, or code reviews - is very much encouraged to do so.
-
-Get started with contributing by reading our [contribution documentation][contributing docs], joining the [#dev-chat] or the GitHub discussion board.
-
-We hope you enjoy using Invoke as much as we enjoy creating it, and we hope you will elect to become part of our community.
-
-## Thanks
-
-Invoke is a combined effort of [passionate and talented people from across the world][contributors]. We thank them for their time, hard work and effort.
-
-Original portions of the software are Copyright © 2024 by respective contributors.
-
-[features docs]: https://invoke.ai/
-[faq]: https://invoke.ai/troubleshooting/faq/
-[contributors]: https://invoke.ai/contributing/contributors/
-[github issues]: https://github.com/invoke-ai/InvokeAI/issues
-[docs home]: https://invoke.ai
-[installation docs]: https://invoke.ai/start-here/installation/
-[#dev-chat]: https://discord.com/channels/1020123559063990373/1049495067846524939
-[contributing docs]: https://invoke.ai/contributing/
-[CI checks on main badge]: https://flat.badgen.net/github/checks/invoke-ai/InvokeAI/main?label=CI%20status%20on%20main&cache=900&icon=github
-[CI checks on main link]: https://github.com/invoke-ai/InvokeAI/actions?query=branch%3Amain
-[discord badge]: https://flat.badgen.net/discord/members/ZmtBAhwWhy?icon=discord
-[discord link]: https://discord.gg/ZmtBAhwWhy
-[github forks badge]: https://flat.badgen.net/github/forks/invoke-ai/InvokeAI?icon=github
-[github forks link]: https://useful-forks.github.io/?repo=invoke-ai%2FInvokeAI
-[github open issues badge]: https://flat.badgen.net/github/open-issues/invoke-ai/InvokeAI?icon=github
-[github open issues link]: https://github.com/invoke-ai/InvokeAI/issues?q=is%3Aissue+is%3Aopen
-[github open prs badge]: https://flat.badgen.net/github/open-prs/invoke-ai/InvokeAI?icon=github
-[github open prs link]: https://github.com/invoke-ai/InvokeAI/pulls?q=is%3Apr+is%3Aopen
-[github stars badge]: https://flat.badgen.net/github/stars/invoke-ai/InvokeAI?icon=github
-[github stars link]: https://github.com/invoke-ai/InvokeAI/stargazers
-[latest commit to main badge]: https://flat.badgen.net/github/last-commit/invoke-ai/InvokeAI/main?icon=github&color=yellow&label=last%20dev%20commit&cache=900
-[latest commit to main link]: https://github.com/invoke-ai/InvokeAI/commits/main
-[latest release badge]: https://flat.badgen.net/github/release/invoke-ai/InvokeAI/development?icon=github
-[latest release link]: https://github.com/invoke-ai/InvokeAI/releases/latest
-[translation status badge]: https://hosted.weblate.org/widgets/invokeai/-/svg-badge.svg
-[translation status link]: https://hosted.weblate.org/engage/invokeai/
-[nvidia docker docs]: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
-[amd docker docs]: https://rocm.docs.amd.com/projects/install-on-linux/en/latest/how-to/docker.html
+ 
