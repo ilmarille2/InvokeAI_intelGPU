@@ -1,7 +1,7 @@
   
 **This is totally unofficial version of invokeai which can be used with Intel Arc GPU.**
 
-- It's based on InvokeAI 6.13.0 which was modified with AI to make it work with Intel Arc GPU at Windows 11
+- It's based on InvokeAI 6.13.6 which was modified with AI to make it work with Intel Arc GPU at Windows 11
 - It's provided as it is. I have no plans to commit it to main invokeai repository.
 - Installation tested with Intel Arc Pro B50 GPU at Windows 11. Propably works with Linux too.
 
@@ -22,16 +22,16 @@ Installation use manual method explained at original invokeai repository with so
 Here are commands to make installation at Windows 11 commandline:
 
 <code>
-git clone https://github.com/ilmarille2/InvokeAI_intelGPU
+git clone https://github.com/ilmarille2/InvokeAI_intelGPU -b 6.13.6
 mkdir InvokeAI
 cd .\InvokeAI\
 uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
 .venv\Scripts\activate.bat  
-cd ..\InvokeAI_intelGPU\invokeai\frontend\web\ 
+cd ..\InvokeAI_6.13.6\invokeai\frontend\web\ 
 pnpm i
 pnpm build
 cd ..\..\..\..\InvokeAI\
-uv pip install ..\InvokeAI_intelGPU --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
+uv pip install ..\InvokeAI_6.13.6 --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
 .venv\Scripts\deactivate.bat
 .venv\Scripts\activate.bat
 .venv\Scripts\invokeai-web.exe --root .</code>
