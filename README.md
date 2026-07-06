@@ -27,11 +27,11 @@ mkdir InvokeAI
 cd .\InvokeAI\
 uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
 .venv\Scripts\activate.bat  
-cd ..\InvokeAI_intelGPU\invokeai\frontend\web\ 
+cd ..\InvokeAI_6.13.6\invokeai\frontend\web\ 
 pnpm i
 pnpm build
 cd ..\..\..\..\InvokeAI\
-uv pip install ..\InvokeAI_intelGPU --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
+uv pip install ..\InvokeAI_6.13.6 --python 3.12 --python-preference only-managed --force-reinstall --torch-backend=xpu
 .venv\Scripts\deactivate.bat
 .venv\Scripts\activate.bat
 .venv\Scripts\invokeai-web.exe --root .</code>
