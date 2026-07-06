@@ -1,7 +1,7 @@
   
 **This is totally unofficial version of invokeai which can be used with Intel Arc GPU.**
 
-- It's based on InvokeAI 6.13.0 which was modified with AI to make it work with Intel Arc GPU at Windows 11
+- It's based on InvokeAI 6.13.6 which was modified with AI to make it work with Intel Arc GPU at Windows 11
 - It's provided as it is. I have no plans to commit it to main invokeai repository.
 - Installation tested with Intel Arc Pro B50 GPU at Windows 11. Propably works with Linux too.
 
