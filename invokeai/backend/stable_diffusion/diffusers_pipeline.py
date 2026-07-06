@@ -177,8 +177,10 @@ class StableDiffusionGeneratorPipeline(StableDiffusionPipeline):
         # See:
         # - https://developer.nvidia.com/cuda-gpus
         # - https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capabilities
+        prefer_xformers = False
         try:
-            prefer_xformers = torch.cuda.is_available() and torch.cuda.get_device_properties("cuda").major <= 7  # type: ignore # Type of "get_device_properties" is partially unknown
+            if self.unet.device.type == "cuda" and torch.cuda.is_available():
+                prefer_xformers = torch.cuda.get_device_properties("cuda").major <= 7  # type: ignore # Type of "get_device_properties" is partially unknown
         except Exception:
             prefer_xformers = False
 
@@ -221,6 +223,8 @@ class StableDiffusionGeneratorPipeline(StableDiffusionPipeline):
             mem_free = psutil.virtual_memory().free
         elif self.unet.device.type == "cuda":
             mem_free, _ = torch.cuda.mem_get_info(TorchDevice.normalize(self.unet.device))
+        elif self.unet.device.type == "xpu":
+            mem_free, _ = torch.xpu.mem_get_info(TorchDevice.normalize(self.unet.device))
         else:
             raise ValueError(f"unrecognized device {self.unet.device}")
         # input tensor of [1, 4, h/8, w/8]

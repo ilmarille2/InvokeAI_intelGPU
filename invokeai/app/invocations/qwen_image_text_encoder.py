@@ -317,6 +317,6 @@ class QwenImageTextEncoderInvocation(BaseInvocation):
             nonlocal text_encoder
             del text_encoder
             gc.collect()
-            torch.cuda.empty_cache()
+            TorchDevice.empty_cache()
 
         return text_encoder, device, cleanup

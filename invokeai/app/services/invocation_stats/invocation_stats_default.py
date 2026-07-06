@@ -54,7 +54,12 @@ class InvocationStatsService(InvocationStatsServiceBase):
         start_ram = psutil.Process().memory_info().rss
 
         # Remember current VRAM usage
-        vram_in_use = torch.cuda.memory_allocated() if torch.cuda.is_available() else 0.0
+        if torch.cuda.is_available():
+            vram_in_use = torch.cuda.memory_allocated()
+        elif hasattr(torch, "xpu") and torch.xpu.is_available():
+            vram_in_use = torch.xpu.memory_allocated()
+        else:
+            vram_in_use = 0.0
 
         assert services.model_manager.load is not None
         services.model_manager.load.ram_cache.stats = self._cache_stats[graph_execution_state_id]
@@ -64,7 +69,13 @@ class InvocationStatsService(InvocationStatsServiceBase):
             yield None
         finally:
             # Record delta VRAM
-            delta_vram_gb = ((torch.cuda.memory_allocated() - vram_in_use) / GB) if torch.cuda.is_available() else 0.0
+            if torch.cuda.is_available():
+                current_vram = torch.cuda.memory_allocated()
+            elif hasattr(torch, "xpu") and torch.xpu.is_available():
+                current_vram = torch.xpu.memory_allocated()
+            else:
+                current_vram = 0.0
+            delta_vram_gb = ((current_vram - vram_in_use) / GB)
 
             node_stats = NodeExecutionStats(
                 invocation_type=invocation.get_type(),
@@ -86,7 +97,12 @@ class InvocationStatsService(InvocationStatsServiceBase):
         model_cache_stats_summary = self._get_model_cache_summary(graph_execution_state_id)
         # Note: We use memory_allocated() here (not memory_reserved()) because we want to show
         # the current actively-used VRAM, not the total reserved memory including PyTorch's cache.
-        vram_usage_gb = torch.cuda.memory_allocated() / GB if torch.cuda.is_available() else None
+        if torch.cuda.is_available():
+            vram_usage_gb = torch.cuda.memory_allocated() / GB
+        elif hasattr(torch, "xpu") and torch.xpu.is_available():
+            vram_usage_gb = torch.xpu.memory_allocated() / GB
+        else:
+            vram_usage_gb = None
 
         return InvocationStatsSummary(
             graph_stats=graph_stats_summary,

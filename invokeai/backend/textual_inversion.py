@@ -67,7 +67,7 @@ class TextualInversionModelRaw(RawModel):
         return result
 
     def to(self, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None) -> None:
-        if not torch.cuda.is_available():
+        if device is None:
             return
         for emb in [self.embedding, self.embedding_2]:
             if emb is not None:
