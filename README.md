@@ -22,7 +22,7 @@ Installation use manual method explained at original invokeai repository with so
 Here are commands to make installation at Windows 11 commandline:
 
 <code>
-git clone https://github.com/ilmarille2/InvokeAI_intelGPU -b 6.13.6
+git clone https://github.com/ilmarille2/InvokeAI_intelGPU -b 6.13.6 InvokeAI_6.13.6
 mkdir InvokeAI
 cd .\InvokeAI\
 uv venv --relocatable --prompt invoke --python 3.12 --python-preference only-managed .venv
